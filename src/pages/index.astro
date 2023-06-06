@@ -2,17 +2,29 @@
 import Layout from "../layouts/Layout.astro";
 ---
 
-<Layout title="Welcome to Astro.">
+<Layout title="Kwota Słownie">
 	<main class="flex flex-col gap-8 w-full p-2 md:p-10">
 		<h1 class="text-6xl text-center">🤑Kwota Słownie💰</h1>
 		<div class="flex flex-col md:flex-row gap-8 w-full">
-			<textarea
-				id="source"
-				class="textarea textarea-bordered w-full h-96 resize-none"></textarea>
-			<textarea
-				id="sink"
-				readonly
-				class="textarea textarea-bordered w-full h-96 resize-none"></textarea>
+			<div class="form-control w-full">
+				<label for="source" class="label">
+					<span class="label-text">Kopiuj kolumnę z excela i wklej tutaj</span>
+				</label>
+				<textarea
+					id="source"
+					class="textarea textarea-bordered w-full h-96 resize-none"></textarea>
+			</div>
+
+			<div class="form-control w-full">
+				<label for="sink" class="label">
+					<span class="label-text">Kopiuj stąd i wklej do excela</span>
+					<button id="copy" class="btn btn-xs">Kopiuj do koszyka</button>
+				</label>
+				<textarea
+					id="sink"
+					readonly
+					class="textarea textarea-bordered h-96 resize-none"></textarea>
+			</div>
 		</div>
 	</main>
 </Layout>
@@ -22,18 +34,20 @@ import Layout from "../layouts/Layout.astro";
 
 	const source = document.querySelector("#source") as HTMLTextAreaElement;
 	const sink = document.querySelector("#sink") as HTMLTextAreaElement;
+	const copy = document.querySelector("#copy") as HTMLButtonElement;
 
 	const pricePLN = pricePLNFactory();
 
 	const onSourceInput = () => {
 		const matched = Array(...source.value.matchAll(/[\d\,\.]+/g));
-
 		const result = matched.map((match) => pricePLN(match[0])).join("\r\n");
-
-		console.log(matched, source.value, result);
-
 		sink.value = result;
 	};
 
+	const onCopyClick = () => {
+		navigator.clipboard.writeText(sink.value);
+	};
+
 	source?.addEventListener("input", onSourceInput);
+	copy?.addEventListener("click", onCopyClick);
 </script>
