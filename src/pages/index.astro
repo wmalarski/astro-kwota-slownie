@@ -3,7 +3,37 @@ import Layout from "../layouts/Layout.astro";
 ---
 
 <Layout title="Welcome to Astro.">
-	<main class="flex justify-center w-full p-8">
-		<h1 class="text-6xl">Welcome to <span>Astro</span></h1>
+	<main class="flex flex-col gap-8 w-full p-2 md:p-10">
+		<h1 class="text-6xl text-center">🤑Kwota Słownie💰</h1>
+		<div class="flex flex-col md:flex-row gap-8 w-full">
+			<textarea
+				id="source"
+				class="textarea textarea-bordered w-full h-96 resize-none"></textarea>
+			<textarea
+				id="sink"
+				readonly
+				class="textarea textarea-bordered w-full h-96 resize-none"></textarea>
+		</div>
 	</main>
 </Layout>
+
+<script>
+	import { pricePLNFactory } from "../utils/pricePLN";
+
+	const source = document.querySelector("#source") as HTMLTextAreaElement;
+	const sink = document.querySelector("#sink") as HTMLTextAreaElement;
+
+	const pricePLN = pricePLNFactory();
+
+	const onSourceInput = () => {
+		const matched = Array(...source.value.matchAll(/[\d\,\.]+/g));
+
+		const result = matched.map((match) => pricePLN(match[0])).join("\r\n");
+
+		console.log(matched, source.value, result);
+
+		sink.value = result;
+	};
+
+	source?.addEventListener("input", onSourceInput);
+</script>
